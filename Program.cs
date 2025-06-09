@@ -1,27 +1,17 @@
-﻿using MalshinonApp.Data;
-using MySql.Data.MySqlClient;
+﻿using MalshinonApp.Models;
+using MalshinonApp.Data;
+using MalshinonApp.Services;
 
-Console.WriteLine("Connecting to DB...");
+Console.WriteLine("=== PersonService Test ===");
 
-try
-{
-    using var connection = DbConnectionHelper.GetConnection();
-    string query = "SELECT id, full_name, secret_code FROM people";
+// יצירת מחלקות בפשטות (בלי Dependency Injection כרגע)
+var personRepo = new PersonRepository();
+var personService = new PersonService(personRepo);
 
-    using var command = new MySqlCommand(query, connection);
-    using var reader = command.ExecuteReader();
+// ניסיון של יצירה/שליפה
+var person = personService.GetOrCreateByName("David");
+Console.WriteLine($"ID: {person.Id} | Name: {person.FullName} | Code: {person.SecretCode}");
 
-    while (reader.Read())
-    {
-        int id = reader.GetInt32("id");
-        string name = reader.GetString("full_name");
-        string code = reader.GetString("secret_code");
-
-        Console.WriteLine($"#{id} {name} ({code})");
-    }
-}
-catch (Exception ex)
-{
-    Console.WriteLine("Connection failed:");
-    Console.WriteLine(ex.Message);
-}
+// ניסיון לשלוף את הקוד שוב לפי שם
+var code = personService.GetSecretCodeByName("David");
+Console.WriteLine($"Secret code for David: {code}");
