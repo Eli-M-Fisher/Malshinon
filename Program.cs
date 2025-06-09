@@ -10,6 +10,7 @@ var personService = new PersonService(personRepo);
 var alertService = new AlertService(alertRepo, reportRepo);
 var reportService = new ReportService(personService, reportRepo, alertService);
 var analysisService = new AnalysisService(reportRepo, personRepo);
+var csvExportService = new CSVExportService(reportRepo);
 
 while (true)
 {
@@ -18,6 +19,7 @@ while (true)
     Console.WriteLine("2. Show Potential Recruits");
     Console.WriteLine("3. Show High-Risk Targets");
     Console.WriteLine("4. Show Alerts");
+    Console.WriteLine("5. Export Reports to CSV");
     Console.WriteLine("0. Exit");
     Console.Write("Choose an option: ");
     string choice = Console.ReadLine()?.Trim() ?? "";
@@ -65,6 +67,12 @@ while (true)
             {
                 Console.WriteLine($"- Target #{a.TargetId} | {a.Reason} | {a.AlertTimeWindowStart}–{a.AlertTimeWindowEnd}");
             }
+            break;
+
+        case "5":
+            Console.Write("Enter file path for CSV export (e.g., reports.csv): ");
+            string path = Console.ReadLine()?.Trim() ?? "";
+            csvExportService.ExportReportsToCsv(path);
             break;
 
         case "0":
