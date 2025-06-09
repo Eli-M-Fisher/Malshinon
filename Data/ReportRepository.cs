@@ -5,12 +5,19 @@ namespace MalshinonApp.Data
 {
     public class ReportRepository : IReportRepository
     {
+        private readonly MySqlConnection _connection;
+
+        public ReportRepository(MySqlConnection connection)
+        {
+            _connection = connection;
+        }
+
         public void Add(Report report)
         {
-            using var connection = DbConnectionHelper.GetConnection();
+            var connection = _connection;
             string query = "INSERT INTO reports (reporter_id, target_id, report_text, timestamp) " +
                            "VALUES (@reporterId, @targetId, @text, @timestamp)";
-            using var command = new MySqlCommand(query, connection);
+            using var command = new MySqlCommand(query, _connection);
 
             command.Parameters.AddWithValue("@reporterId", report.ReporterId);
             command.Parameters.AddWithValue("@targetId", report.TargetId);
@@ -23,9 +30,9 @@ namespace MalshinonApp.Data
 
         public Report? GetById(int id)
         {
-            using var connection = DbConnectionHelper.GetConnection();
+            var connection = _connection;
             string query = "SELECT * FROM reports WHERE id = @id";
-            using var command = new MySqlCommand(query, connection);
+            using var command = new MySqlCommand(query, _connection);
             command.Parameters.AddWithValue("@id", id);
 
             using var reader = command.ExecuteReader();
@@ -39,9 +46,9 @@ namespace MalshinonApp.Data
         public List<Report> GetReportsByTargetId(int targetId)
         {
             var reports = new List<Report>();
-            using var connection = DbConnectionHelper.GetConnection();
+            var connection = _connection;
             string query = "SELECT * FROM reports WHERE target_id = @targetId";
-            using var command = new MySqlCommand(query, connection);
+            using var command = new MySqlCommand(query, _connection);
             command.Parameters.AddWithValue("@targetId", targetId);
 
             using var reader = command.ExecuteReader();
@@ -55,9 +62,9 @@ namespace MalshinonApp.Data
         public List<Report> GetReportsByReporterId(int reporterId)
         {
             var reports = new List<Report>();
-            using var connection = DbConnectionHelper.GetConnection();
+            var connection = _connection;
             string query = "SELECT * FROM reports WHERE reporter_id = @reporterId";
-            using var command = new MySqlCommand(query, connection);
+            using var command = new MySqlCommand(query, _connection);
             command.Parameters.AddWithValue("@reporterId", reporterId);
 
             using var reader = command.ExecuteReader();
@@ -71,9 +78,9 @@ namespace MalshinonApp.Data
         public List<Report> GetAll()
         {
             var reports = new List<Report>();
-            using var connection = DbConnectionHelper.GetConnection();
+            var connection = _connection;
             string query = "SELECT * FROM reports";
-            using var command = new MySqlCommand(query, connection);
+            using var command = new MySqlCommand(query, _connection);
 
             using var reader = command.ExecuteReader();
             while (reader.Read())
