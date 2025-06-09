@@ -9,5 +9,6 @@ namespace MalshinonApp.Data
         List<Report> GetReportsByTargetId(int targetId);
         List<Report> GetReportsByReporterId(int reporterId);
         List<Report> GetAll();
+        List<Report> GetAllReports();
     }
 }

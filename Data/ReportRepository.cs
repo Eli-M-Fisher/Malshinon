@@ -83,6 +83,11 @@ namespace MalshinonApp.Data
             return reports;
         }
 
+        public List<Report> GetAllReports()
+        {
+            return GetAll();
+        }
+
         private Report ReadReport(MySqlDataReader reader)
         {
             return new Report
