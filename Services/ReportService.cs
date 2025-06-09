@@ -7,11 +7,16 @@ namespace MalshinonApp.Services
     {
         private readonly IPersonService _personService;
         private readonly IReportRepository _reportRepository;
+        private readonly IAlertService _alertService;
 
-        public ReportService(IPersonService personService, IReportRepository reportRepository)
+        public ReportService(
+            IPersonService personService,
+            IReportRepository reportRepository,
+            IAlertService alertService)
         {
             _personService = personService;
             _reportRepository = reportRepository;
+            _alertService = alertService;
         }
 
         public void SubmitReport(string reporterIdentifier, string targetIdentifier, string text, DateTime timestamp)
@@ -28,17 +33,17 @@ namespace MalshinonApp.Services
             };
 
             _reportRepository.Add(report);
+
+            _alertService.EvaluateAlertsForTarget(target.Id, timestamp);
         }
 
         private Person GetOrCreatePerson(string identifier)
         {
-            // נסה לפי קוד
             if (identifier.Length == 8 && identifier.All(char.IsLetterOrDigit))
             {
                 return _personService.GetOrCreateByCode(identifier);
             }
 
-            // אחרת - לפי שם
             return _personService.GetOrCreateByName(identifier);
         }
     }

@@ -10,9 +10,9 @@ var reportRepo = new ReportRepository();
 var alertRepo = new AlertRepository();
 
 var personService = new PersonService(personRepo);
-var reportService = new ReportService(personService, reportRepo);
-var analysisService = new AnalysisService(reportRepo, personRepo);
 var alertService = new AlertService(alertRepo, reportRepo);
+var reportService = new ReportService(personService, reportRepo, alertService);
+var analysisService = new AnalysisService(reportRepo, personRepo);
 
 // שלב 2: קלט מהמשתמש
 Console.Write("Enter your identifier (name or secret code): ");
