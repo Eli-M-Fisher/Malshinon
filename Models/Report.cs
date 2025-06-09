@@ -6,7 +6,7 @@ namespace MalshinonApp.Models
         public int ReporterId { get; set; }
         public int TargetId { get; set; }
         public string ReportText { get; set; } = string.Empty;
-        public string Text { get; set; }
+        public string Text { get; set; } = string.Empty;
         public DateTime Timestamp { get; set; }
     }
 }

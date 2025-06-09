@@ -15,6 +15,12 @@ public class CSVExportService
 
     public void ExportReportsToCsv(string filePath)
     {
+        if (_reportRepository == null)
+        {
+            Console.WriteLine("Error: Report repository is not initialized.");
+            return;
+        }
+
         var reports = _reportRepository.GetAllReports();
 
         var lines = new List<string>
@@ -24,7 +30,14 @@ public class CSVExportService
 
         foreach (var r in reports)
         {
-            var line = $"{r.Id},{r.ReporterId},{r.TargetId},\"{r.Text.Replace("\"", "\"\"")}\",{r.Timestamp:o}";
+            if (r == null)
+            {
+                Console.WriteLine("⚠️ Skipping null report");
+                continue;
+            }
+
+            string text = r.Text ?? "(no text)";
+            var line = $"{r.Id},{r.ReporterId},{r.TargetId},\"{text.Replace("\"", "\"\"")}\",{r.Timestamp:o}";
             lines.Add(line);
         }
 
