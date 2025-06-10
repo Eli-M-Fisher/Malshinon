@@ -3,6 +3,7 @@ using System.Text;
 using MalshinonApp.Models;
 using MalshinonApp.Data;
 using Microsoft.VisualBasic.FileIO;
+using MalshinonApp.Services.Logging;
 
 namespace MalshinonApp.Services;
 
@@ -21,7 +22,7 @@ public class CSVImportService : ICSVImportService
 
         if (!File.Exists(filePath))
         {
-            Console.WriteLine($"Error: File '{filePath}' does not exist.");
+            SimpleLogger.Log("ERROR", $"File '{filePath}' does not exist.");
             return importedReports;
         }
 
@@ -37,11 +38,11 @@ public class CSVImportService : ICSVImportService
             try
             {
                 string[]? fields = parser.ReadFields();
-                Console.WriteLine($"DEBUG line: {string.Join(" | ", fields)}");
+                SimpleLogger.Log("DEBUG", $"line: {string.Join(" | ", fields)}");
 
                 if (fields == null || fields.Length < 5)
                 {
-                    Console.WriteLine("Warning: Skipping invalid line.");
+                    SimpleLogger.Log("WARN", "Skipping invalid line.");
                     continue;
                 }
 
@@ -59,11 +60,11 @@ public class CSVImportService : ICSVImportService
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error importing line: {ex.Message}");
+                SimpleLogger.Log("ERROR", $"Importing line: {ex.Message}");
             }
         }
 
-        Console.WriteLine("Reports imported successfully.");
+        SimpleLogger.Log("INFO", "Reports imported successfully.");
         return importedReports;
     }
 }

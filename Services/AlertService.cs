@@ -1,5 +1,6 @@
 using MalshinonApp.Models;
 using MalshinonApp.Data;
+using MalshinonApp.Services.Logging;
 
 namespace MalshinonApp.Services
 {
@@ -45,6 +46,7 @@ namespace MalshinonApp.Services
                         "Target mentioned in 20+ reports");
                 }
             }
+            SimpleLogger.Log("Info", $"Evaluated alerts for Target #{targetId} at {DateTime.Now}");
         }
 
         private bool AlertExists(int targetId, DateTime start, DateTime end)
@@ -67,6 +69,7 @@ namespace MalshinonApp.Services
             };
 
             _alertRepository.Add(alert);
+            SimpleLogger.Log("Alert", $"New alert created for Target #{targetId} | Reason: {reason} | Window: {start}–{end}");
         }
 
         public List<Alert> GetAllAlerts()

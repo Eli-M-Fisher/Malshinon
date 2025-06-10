@@ -1,4 +1,5 @@
-﻿using MalshinonApp.Models;
+﻿using MalshinonApp.Services.Logging;
+using MalshinonApp.Models;
 using MalshinonApp.Data;
 using MalshinonApp.Services;
 
@@ -23,6 +24,8 @@ var csvExportService = new CSVExportService(reportRepo);
 Console.WriteLine(csvExportService == null ? "❌ csvExportService is NULL" : "✅ csvExportService is OK");
 var csvImportService = new CSVImportService(reportRepo);
 Console.WriteLine(csvImportService == null ? "❌ csvImportService is NULL" : "✅ csvImportService is OK");
+
+// Simple logging usage without singleton
 
 while (true)
 {
@@ -50,6 +53,7 @@ while (true)
             DateTime now = DateTime.Now;
 
             reportService!.SubmitReport(reporterInput, targetInput, text, now);
+            SimpleLogger.Log($"Report submitted by '{reporterInput}' against '{targetInput}' at {now}.", "Reports");
             Console.WriteLine("Report submitted successfully!");
             break;
 
@@ -90,6 +94,7 @@ while (true)
             Console.Write("Enter file path for CSV export (e.g., reports.csv): ");
             string path = Console.ReadLine()?.Trim() ?? "";
             csvExportService!.ExportReportsToCsv(path);
+            SimpleLogger.Log($"Reports exported to '{path}'.", "Export");
             break;
 
         case "4":
@@ -97,14 +102,17 @@ while (true)
             string importPath = Console.ReadLine()?.Trim() ?? "";
             var importedReports = csvImportService!.ImportReportsFromCsv(importPath);
             Console.WriteLine($"Imported {importedReports.Count} reports successfully.");
+            SimpleLogger.Log($"{importedReports.Count} reports imported from '{importPath}'.", "Import");
             break;
 
         case "0":
             Console.WriteLine("Exiting...");
+            SimpleLogger.Log("Application exited.", "System");
             return;
 
         default:
             Console.WriteLine("Invalid option.");
+            SimpleLogger.Log($"Invalid menu option selected: '{choice}'.", "Input");
             break;
     }
 }

@@ -1,5 +1,6 @@
 using MalshinonApp.Models;
 using MalshinonApp.Data;
+using MalshinonApp.Services.Logging;
 
 namespace MalshinonApp.Services
 {
@@ -21,20 +22,29 @@ namespace MalshinonApp.Services
 
         public void SubmitReport(string reporterIdentifier, string targetIdentifier, string text, DateTime timestamp)
         {
-            Person reporter = GetOrCreatePerson(reporterIdentifier);
-            Person target = GetOrCreatePerson(targetIdentifier);
-
-            var report = new Report
+            try
             {
-                ReporterId = reporter.Id,
-                TargetId = target.Id,
-                ReportText = text,
-                Timestamp = timestamp
-            };
+                Person reporter = GetOrCreatePerson(reporterIdentifier);
+                Person target = GetOrCreatePerson(targetIdentifier);
 
-            _reportRepository.Add(report);
+                var report = new Report
+                {
+                    ReporterId = reporter.Id,
+                    TargetId = target.Id,
+                    ReportText = text,
+                    Timestamp = timestamp
+                };
 
-            _alertService.EvaluateAlertsForTarget(target.Id, timestamp);
+                _reportRepository.Add(report);
+                SimpleLogger.LogInfo($"Report submitted by '{reporterIdentifier}' against '{targetIdentifier}' at {timestamp}.");
+
+                _alertService.EvaluateAlertsForTarget(target.Id, timestamp);
+            }
+            catch (Exception ex)
+            {
+                SimpleLogger.LogError($"Error in SubmitReport: {ex.Message}");
+                throw;
+            }
         }
 
         private Person GetOrCreatePerson(string identifier)
