@@ -98,8 +98,9 @@ while (true)
             break;
 
         case "4":
-            Console.Write("Enter file path for CSV import (e.g., reports.csv): ");
-            string importPath = Console.ReadLine()?.Trim() ?? "";
+            Console.Write("Enter CSV file name (e.g., reports.csv): ");
+            string filename = Console.ReadLine()?.Trim() ?? "";
+            string importPath = Path.Combine("CSV", filename);
             var importedReports = csvImportService!.ImportReportsFromCsv(importPath);
             Console.WriteLine($"Imported {importedReports.Count} reports successfully.");
             SimpleLogger.Log($"{importedReports.Count} reports imported from '{importPath}'.", "Import");

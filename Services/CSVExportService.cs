@@ -41,7 +41,8 @@ public class CSVExportService
             lines.Add(line);
         }
 
-        File.WriteAllLines(filePath, lines, Encoding.UTF8);
-        Console.WriteLine($"Reports exported to {filePath}");
+        var fullPath = Path.Combine("CSV", filePath);
+        File.WriteAllLines(fullPath, lines, Encoding.UTF8);
+        Console.WriteLine($"Reports exported to {fullPath}");
     }
 }
