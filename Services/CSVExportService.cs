@@ -36,7 +36,7 @@ public class CSVExportService
                 continue;
             }
 
-            string text = r.Text ?? "(no text)";
+            string text = r.ReportText ?? "(no text)";
             var line = $"{r.Id},{r.ReporterId},{r.TargetId},\"{text.Replace("\"", "\"\"")}\",{r.Timestamp:o}";
             lines.Add(line);
         }

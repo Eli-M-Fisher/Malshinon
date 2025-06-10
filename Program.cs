@@ -21,6 +21,8 @@ var analysisService = new AnalysisService(reportRepo, personRepo);
 Console.WriteLine(analysisService == null ? "❌ analysisService is NULL" : "✅ analysisService is OK");
 var csvExportService = new CSVExportService(reportRepo);
 Console.WriteLine(csvExportService == null ? "❌ csvExportService is NULL" : "✅ csvExportService is OK");
+var csvImportService = new CSVImportService(reportRepo);
+Console.WriteLine(csvImportService == null ? "❌ csvImportService is NULL" : "✅ csvImportService is OK");
 
 while (true)
 {
@@ -28,6 +30,7 @@ while (true)
     Console.WriteLine("1. Submit a Report");
     Console.WriteLine("2. Show Dashboard");
     Console.WriteLine("3. Export Reports to CSV");
+    Console.WriteLine("4. Import Reports from CSV");
     Console.WriteLine("0. Exit");
     Console.Write("Choose an option: ");
     string choice = Console.ReadLine()?.Trim() ?? "";
@@ -47,38 +50,38 @@ while (true)
             DateTime now = DateTime.Now;
 
             reportService!.SubmitReport(reporterInput, targetInput, text, now);
-            Console.WriteLine("✅ Report submitted successfully!");
+            Console.WriteLine("Report submitted successfully!");
             break;
 
         case "2":
             Console.WriteLine("\n=== Analysis Dashboard ===");
 
-            Console.WriteLine("\n🧑‍💼 Potential Recruits:");
+            Console.WriteLine("\nPotential Recruits:");
             var recruits = analysisService!.GetPotentialRecruits();
             foreach (var p in recruits)
             {
                 Console.WriteLine($"- {p.FullName} ({p.SecretCode})");
             }
 
-            Console.WriteLine("\n🎯 High-Risk Targets:");
+            Console.WriteLine("\nHigh-Risk Targets:");
             var threats = analysisService!.GetHighRiskTargets();
             foreach (var p in threats)
             {
                 Console.WriteLine($"- {p.FullName} ({p.SecretCode})");
             }
 
-            Console.WriteLine("\n🚨 Alerts:");
+            Console.WriteLine("\nAlerts:");
             var alerts = alertService!.GetAllAlerts();
             foreach (var a in alerts)
             {
                 Console.WriteLine($"- Target #{a.TargetId} | {a.Reason} | {a.AlertTimeWindowStart}–{a.AlertTimeWindowEnd}");
             }
 
-            Console.WriteLine("\n📄 Reports:");
+            Console.WriteLine("\nReports:");
             var reports = reportRepo!.GetAllReports();
             foreach (var r in reports)
             {
-                Console.WriteLine($"- {r.Timestamp:g} | From #{r.ReporterId} -> #{r.TargetId}: {r.Text}");
+                Console.WriteLine($"- {r.Timestamp:g} | From #{r.ReporterId} -> #{r.TargetId}: {r.ReportText}");
             }
 
             break;
@@ -87,6 +90,13 @@ while (true)
             Console.Write("Enter file path for CSV export (e.g., reports.csv): ");
             string path = Console.ReadLine()?.Trim() ?? "";
             csvExportService!.ExportReportsToCsv(path);
+            break;
+
+        case "4":
+            Console.Write("Enter file path for CSV import (e.g., reports.csv): ");
+            string importPath = Console.ReadLine()?.Trim() ?? "";
+            var importedReports = csvImportService!.ImportReportsFromCsv(importPath);
+            Console.WriteLine($"Imported {importedReports.Count} reports successfully.");
             break;
 
         case "0":
