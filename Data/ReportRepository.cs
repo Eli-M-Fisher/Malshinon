@@ -14,7 +14,9 @@ namespace MalshinonApp.Data
 
         public void Add(Report report)
         {
-            var connection = _connection;
+            if (_connection.State != System.Data.ConnectionState.Open)
+                _connection.Open();
+
             string query = "INSERT INTO reports (reporter_id, target_id, report_text, timestamp) " +
                            "VALUES (@reporterId, @targetId, @text, @timestamp)";
             using var command = new MySqlCommand(query, _connection);
@@ -26,6 +28,7 @@ namespace MalshinonApp.Data
 
             command.ExecuteNonQuery();
             report.Id = (int)command.LastInsertedId;
+            Console.WriteLine($"[DEBUG] Inserted report: ReporterId={report.ReporterId}, TargetId={report.TargetId}, Id={report.Id}");
         }
 
         public Report? GetById(int id)

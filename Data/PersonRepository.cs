@@ -84,9 +84,9 @@ namespace MalshinonApp.Data
             return new Person
             {
                 Id = reader.GetInt32("id"),
-                FullName = reader.GetString("full_name"),
-                SecretCode = reader.GetString("secret_code"),
-                CreatedAt = reader.GetDateTime("created_at")
+                FullName = reader.IsDBNull(reader.GetOrdinal("full_name")) ? "" : reader.GetString("full_name"),
+                SecretCode = reader.IsDBNull(reader.GetOrdinal("secret_code")) ? "" : reader.GetString("secret_code"),
+                CreatedAt = reader.IsDBNull(reader.GetOrdinal("created_at")) ? DateTime.MinValue : reader.GetDateTime("created_at")
             };
         }
 

@@ -38,7 +38,7 @@ public class CSVImportService : ICSVImportService
             try
             {
                 string[]? fields = parser.ReadFields();
-                SimpleLogger.Log("DEBUG", $"line: {string.Join(" | ", fields)}");
+                Console.WriteLine($"[DEBUG] fields: {fields?.Length} | {string.Join(" | ", fields ?? Array.Empty<string>())}");
 
                 if (fields == null || fields.Length < 5)
                 {
@@ -48,11 +48,10 @@ public class CSVImportService : ICSVImportService
 
                 var report = new Report
                 {
-                    Id = int.Parse(fields[0]),
                     ReporterId = int.Parse(fields[1]),
                     TargetId = int.Parse(fields[2]),
                     ReportText = fields[3],
-                    Timestamp = DateTime.Parse(fields[4], null, DateTimeStyles.RoundtripKind)
+                    Timestamp = DateTime.ParseExact(fields[4], "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
                 };
 
                 _reportRepository.Add(report);
@@ -61,6 +60,7 @@ public class CSVImportService : ICSVImportService
             catch (Exception ex)
             {
                 SimpleLogger.Log("ERROR", $"Importing line: {ex.Message}");
+                Console.WriteLine($"[ERROR] Importing line: {ex}");
             }
         }
 
